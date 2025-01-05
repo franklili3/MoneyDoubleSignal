@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 bitcoin_strategy_backtest = pd.read_csv('bitcoin_strategy_backtest.csv', index_col=0, parse_dates=True)
 returns = bitcoin_strategy_backtest['returns']
 print(returns.head())
-#pf.create_returns_tear_sheet(returns)
-#plt.show()
+pf.create_returns_tear_sheet(returns)
+plt.show()
 # %%
 import json
 bitcoin_strategy_backtest['positions'] = bitcoin_strategy_backtest['positions'].apply(lambda x: x.replace("'", '"'))
