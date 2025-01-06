@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 bitcoin_strategy_backtest = pd.read_csv('bitcoin_strategy_backtest.csv', index_col=0, parse_dates=True)
 returns = bitcoin_strategy_backtest['returns']
-print(returns.head())
+#print(returns.head())
 pf.create_returns_tear_sheet(returns)
 plt.show()
 # %%
@@ -30,11 +30,14 @@ print(positions_edited.head())
 transactions = bitcoin_strategy_backtest[['transactions']]
 transactions_edited = pd.DataFrame(0, index = transactions.index, columns = [['txn_volume', 'txn_shares']])
 for index, row in transactions.iterrows():
+    print('index: ', index, "row['transactions']: ", row['transactions'])
     transactions_data = json.loads(row['transactions'])
-
     if transactions_data:
         transactions_edited.loc[index, 'txn_volume'] = transactions_data[0]['transaction_money']   
         transactions_edited.loc[index, 'txn_shares'] = transactions_data[0]['amount']   
+    else:
+        transactions_edited.loc[index, 'txn_volume'] = 0
+        transactions_edited.loc[index, 'txn_shares'] = 0
 #print(returns.head())
 #print(positions.head())
 print(transactions.head())
