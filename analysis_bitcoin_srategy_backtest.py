@@ -13,6 +13,8 @@ plt.show()
 import json
 bitcoin_strategy_backtest['positions'] = bitcoin_strategy_backtest['positions'].apply(lambda x: x.replace("'", '"'))
 bitcoin_strategy_backtest['transactions'] = bitcoin_strategy_backtest['transactions'].apply(lambda x: x.replace("'", '"'))
+bitcoin_strategy_backtest['transactions'] = bitcoin_strategy_backtest['transactions'].apply(lambda x: x.replace("datetime.", '"datetime.'))
+bitcoin_strategy_backtest['transactions'] = bitcoin_strategy_backtest['transactions'].apply(lambda x: x.replace(")", ')"'))
 
 positions = bitcoin_strategy_backtest[['positions', 'ending_cash']]
 position_data = json.loads(positions.iloc[1, 0])
@@ -28,17 +30,26 @@ for index, row in positions.iterrows():
 print(positions_edited.head()) 
 # %%
 transactions = bitcoin_strategy_backtest[['transactions']]
-transactions_edited = pd.DataFrame(0, index = transactions.index, columns = [['txn_volume', 'txn_shares']])
+transactions_edited = pd.DataFrame(0, index = transactions.index, columns = [['amount', 'price', 'symbol']])
 for index, row in transactions.iterrows():
-    print('index: ', index, "row['transactions']: ", row['transactions'])
+    #print('index: ', index, "row['transactions']: ", row['transactions'])
     transactions_data = json.loads(row['transactions'])
     if transactions_data:
-        transactions_edited.loc[index, 'txn_volume'] = transactions_data[0]['transaction_money']   
-        transactions_edited.loc[index, 'txn_shares'] = transactions_data[0]['amount']   
+        transactions_edited.loc[index, 'price'] = transactions_data[0]['price']   
+        transactions_edited.loc[index, 'amount'] = transactions_data[0]['amount']   
+        transactions_edited.loc[index, 'symbol'] = symbol   
     else:
-        transactions_edited.loc[index, 'txn_volume'] = 0
-        transactions_edited.loc[index, 'txn_shares'] = 0
+        transactions_edited.loc[index, 'price'] = 0
+        transactions_edited.loc[index, 'amount'] = 0
+        transactions_edited.loc[index, 'symbol'] = ''  
 #print(returns.head())
 #print(positions.head())
-print(transactions.head())
+print(transactions_edited.head())
+# %%
+pf.create_full_tear_sheet(returns,
+                          positions=positions_edited,
+                          transactions=transactions_edited,
+                          slippage=0.1)
+plt.show()
+
 # %%
