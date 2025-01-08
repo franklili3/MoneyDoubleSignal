@@ -32,12 +32,18 @@ for index, row in positions.iterrows():
 
 transactions = bitcoin_strategy_backtest[['transactions']]
 transactions_edited = pd.DataFrame(np.nan, index = transactions.index, columns = [['amount', 'price', 'symbol']])
+transactions_edited['symbol'] = transactions_edited['symbol'].astype(str)
+
 for index, row in transactions.iterrows():
     #print('index: ', index, "row['transactions']: ", row['transactions'])
     transactions_data = json.loads(row['transactions'])
     if transactions_data:
         transactions_edited.loc[index, 'price'] = float(transactions_data[0]['price'])   
-        transactions_edited.loc[index, 'amount'] = transactions_data[0]['amount']   
+        transactions_edited.loc[index, 'amount'] = transactions_data[0]['amount']           
+        transactions_edited.loc[index, 'symbol'] = symbol
+    else:
+        transactions_edited.loc[index, 'price'] = 0
+        transactions_edited.loc[index, 'amount'] = 0
         transactions_edited.loc[index, 'symbol'] = symbol   
 transactions_edited = transactions_edited.dropna()
 #print(returns.head())
@@ -47,7 +53,7 @@ transactions_edited = transactions_edited.dropna()
 pf.create_full_tear_sheet(returns,
                           positions=positions_edited,
                           transactions=transactions_edited,
-                          slippage=0.1)
+                          slippage=1)
 plt.show()
 
 # %%
