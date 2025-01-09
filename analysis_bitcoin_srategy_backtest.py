@@ -5,12 +5,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import json
-
+import warnings
+warnings.filterwarnings('ignore')
 bitcoin_strategy_backtest = pd.read_csv('bitcoin_strategy_backtest.csv', index_col=0, parse_dates=True)
 returns = bitcoin_strategy_backtest['returns']
-print(returns.head())
+#print(returns.head())
 pf.create_returns_tear_sheet(returns)
 
+# %%
 bitcoin_strategy_backtest['positions'] = bitcoin_strategy_backtest['positions'].apply(lambda x: x.replace("'", '"'))
 bitcoin_strategy_backtest['transactions'] = bitcoin_strategy_backtest['transactions'].apply(lambda x: x.replace("'", '"'))
 bitcoin_strategy_backtest['transactions'] = bitcoin_strategy_backtest['transactions'].apply(lambda x: x.replace("datetime.", '"datetime.'))
